@@ -184,7 +184,7 @@ void Server_runLoop(struct pollfd* pollfds)
 				char *addressString = Util_addressToString(&remote);
 				Log_debug("Connection from %s port %d\n", addressString, Util_addressToPort(&remote));
 				free(addressString);
-				if (Client_add(tcpfd, &remote) < 0)
+				if (Client_add(tcpfd, &remote, addrlen) < 0)
 					close(tcpfd);
 			}
 		}

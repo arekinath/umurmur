@@ -40,7 +40,7 @@
 #if BYTE_ORDER == BIG_ENDIAN
 #define BYTE_ORDER_BIG_ENDIAN
 #endif // BYTE_ORDER == BIG_ENDIAN
-#elif defined(LINUX)
+#elif defined(LINUX) || defined(__sun)
 #include <endian.h>
 #if __BYTE_ORDER == __BIG_ENDIAN
 #define BYTE_ORDER_BIG_ENDIAN

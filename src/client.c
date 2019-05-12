@@ -314,7 +314,7 @@ static int findFreeSessionId()
 	return -1;
 }
 
-int Client_add(int fd, struct sockaddr_storage *remote)
+int Client_add(int fd, struct sockaddr_storage *remote, size_t remlen)
 {
 	client_t* newclient;
 	message_t *sendmsg;
@@ -331,6 +331,7 @@ int Client_add(int fd, struct sockaddr_storage *remote)
 
 	newclient->tcpfd = fd;
 	memcpy(&newclient->remote_tcp, remote, sizeof(struct sockaddr_storage));
+	newclient->remote_addr_len = remlen;
 	newclient->ssl = SSLi_newconnection(&newclient->tcpfd, &newclient->SSLready);
 	if (newclient->ssl == NULL) {
 		addressString = Util_addressToString(remote);
@@ -1028,6 +1029,8 @@ static int Client_send_udp(client_t *client, uint8_t *data, int len)
 
 #if defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
 			sendto(udpsock, buf, len + 4, 0, (struct sockaddr *)&client->remote_udp, client->remote_tcp.ss_len);
+#elif defined(__sun)
+			sendto(udpsock, buf, len + 4, 0, (struct sockaddr *)&client->remote_udp, client->remote_addr_len);
 #else
 			sendto(udpsock, buf, len + 4, 0, (struct sockaddr *)&client->remote_udp, sizeof(struct sockaddr_storage));
 #endif
